@@ -1,3 +1,6 @@
 # Private configurations
 .env
 .htpasswd
+
+# Irrelevant for execution
+Notes
