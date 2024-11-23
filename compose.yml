@@ -101,8 +101,8 @@ services:
     healthcheck:
       test: [
           "CMD-SHELL",
-          "curl -f http://localhost:25600/actuator/health || exit 1",
-        ] # TODO: Add custom healtcheck script
+          "exec 5<>/dev/tcp/localhost/25600 || exit 1"
+        ]
       interval: 90s
       timeout: 15s
       start_period: 3m
@@ -131,7 +131,10 @@ services:
           cpus: "0.75"
           memory: 1g
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8096/health || exit 1"] # TODO: Add custom healtcheck script
+      test: [
+          "CMD-SHELL",
+          "curl -f http://localhost:8096/health || exit 1"
+        ]
       interval: 90s
       timeout: 15s
       start_period: 3m
