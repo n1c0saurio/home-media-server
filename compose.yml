@@ -63,7 +63,7 @@ services:
       # Directories
       - SLSKD_SHARED_DIR=/share
       - SLSKD_DOWNLOADS_DIR=/downloads
-      - SLSKD_INCOMPLETE_DIR=/downloads
+      - SLSKD_INCOMPLETE_DIR=/incomplete
     ports:
       - ${SOULSEEK_PORT}:5030
       - 50300:50300
@@ -74,6 +74,7 @@ services:
       - ${ROOT_PATH}${MUSIC_DIR}:/share/music:z
       - ${ROOT_PATH}${TSUNDOKU_DIR}:/share/unsorted:z
       - ${ROOT_PATH}${WAREHOUSE_PATH}:/downloads:z
+      - ${ROOT_PATH}${TEMP_PATH}:/incomplete:z
 
   # Comics and Books
   komga:
