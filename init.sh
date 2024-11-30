@@ -12,8 +12,8 @@ ask-to() {
     echo -en "\n🡆 $1 (y/n): "
     read -r response
     case $response in
-        y | Y) "${@:2}" ;; # Expand the remaining positional arguments
-        n | N | *) echo "  Omitting..." ;;
+    y | Y) "${@:2}" ;; # Expand the remaining positional arguments
+    n | N | *) echo "  Omitting..." ;;
     esac
 }
 
@@ -83,7 +83,8 @@ system-settings() {
     hostnamectl set-hostname "${HOSTNAME_STATIC}" --static
     hostnamectl set-hostname "${HOSTNAME_PRETTY}" --pretty
     # Fix hostname error when run sudo
-    echo "127.0.1.1       ${HOSTNAME_STATIC}" >> /etc/hosts
+    # TODO: Improve to add it on the second line
+    echo "127.0.1.1       ${HOSTNAME_STATIC}" >>/etc/hosts
 
     ask-to "Edit WIFI authentication interactively?" vim /etc/network/interfaces.d/wlan0
 }
@@ -94,7 +95,7 @@ customizations() {
     :
 }
 
-# Lock some features to enhance the security of the system.
+# Disable some features to enhance the security of the system.
 secure-the-system() {
     # Disable configurable system settings
     # https://raspi.debian.net/defaults-and-settings
@@ -106,12 +107,25 @@ secure-the-system() {
 }
 
 main() {
-    # TODO: Check the existence of `.env` and `.htpasswd` files before run
+    # Validations
+    if [[ ! -f .env || ! -f .htpasswd ]]; then
+        echo "Fatal error: .env and .htpasswd are both required to run this script."
+        exit 1
+    fi
 
     if [ "$EUID" != 0 ]; then
+        echo "This script requires superuser privileges..."
         sudo "$0"
         exit $?
     fi
+
+    echo "Home Media Server setup started..."
+
+    ask-to "Install packages?" install-packages
+    ask-to "Apply general system configurations?" system-settings
+    ask-to "Create a regular user?" create-user
+    ask-to "Apply non-critical configurations?" customizations
+    ask-to "Enforce the system security?" secure-the-system
 }
 
 main
