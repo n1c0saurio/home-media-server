@@ -119,6 +119,10 @@ main() {
         exit $?
     fi
 
+    # Loads variables from .env file
+    # shellcheck disable=SC2046
+    export $(grep -v '^#' /home/nico/Repositorios/Matsushiro/env_example | xargs)
+
     echo "Home Media Server setup started..."
 
     ask-to "Install packages?" install-packages
