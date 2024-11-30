@@ -4,18 +4,20 @@ help() (
     :
 )
 
-# TODO: Fix multiple arguments not being retrieved, add it to the docstring
-# Utility function to ask for confirmation before run any other function or command
-ask_to() {
+# Ask for confirmation before run any other given function or command.
+#
+# Example:
+#   ask-to "Upgrade the packages?" apt-get upgrade -y
+ask-to() {
     echo -en "\n🡆 $1 (y/n): "
     read -r response
     case $response in
-    y | Y) "$2" ;;
-    n | N | *) echo "  Omitting..." ;;
+        y | Y) "${@:2}" ;; # Expand the remaining positional arguments
+        n | N | *) echo "  Omitting..." ;;
     esac
 }
 
-# Utility function to add all the needed repositories before install the packages.
+# Add all the needed repositories before install any packages.
 # Called automatically by `add_repos()`.
 add-repos() {
     # Docker
@@ -28,10 +30,10 @@ add-repos() {
         $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
         sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 
-    # TODO: Add MEGA CLI, to sync a directory where important logs from the system should be saved
+    # TODO: Add MEGACMD, to sync a directory where important logs from the system should be saved
 }
 
-# Add every package needed to deploy this setup along with other useful ones
+# Add every package needed to deploy this setup along with other useful ones.
 install-packages() {
     add-repos
 
@@ -56,7 +58,7 @@ install-packages() {
         docker-compose-plugin
 }
 
-# Setup a default user with admin privileges
+# Setup a default user with admin privileges.
 create-user() {
     groupadd \
         --gid "${USER_GROUP_ID}" "${USER_GROUP_NAME}"
@@ -74,7 +76,7 @@ create-user() {
     chown -R "${USER_GROUP_NAME}":"${USER_GROUP_NAME}" /home/"${USER_GROUP_NAME}"/.ssh
 }
 
-# General configurations for the whole system
+# General configurations for the whole system.
 system-settings() {
     timedatectl set-timezone "${TIMEZONE}"
 
@@ -86,13 +88,13 @@ system-settings() {
     ask-to "Edit WIFI authentication interactively?" vim /etc/network/interfaces.d/wlan0
 }
 
-# Non-critical configurations
+# Non-critical configurations.
 customizations() {
     # TODO: .bashrc customizations and the likes
     :
 }
 
-# Lock some features to enhance the security of the system
+# Lock some features to enhance the security of the system.
 secure-the-system() {
     # Disable configurable system settings
     # https://raspi.debian.net/defaults-and-settings
