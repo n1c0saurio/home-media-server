@@ -119,9 +119,9 @@ main() {
         exit $?
     fi
 
-    # Loads variables from .env file
+    # Loading the variables from the .env file
     # shellcheck disable=SC2046
-    export $(grep -v '^#' /home/nico/Repositorios/Matsushiro/env_example | xargs)
+    export $(grep -v '^#' .env | xargs)
 
     echo "Home Media Server setup started..."
 
