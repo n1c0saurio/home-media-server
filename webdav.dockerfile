@@ -18,6 +18,9 @@ RUN useradd -s /bin/bash -u ${OWNER_ID} -g ${OWNER_NAME} --no-create-home ${OWNE
 COPY ${CONFIG_FILE} /etc/nginx/nginx.conf
 COPY ${AUTH_FILE} /etc/nginx/.htpasswd
 
+# Append the user directive to use the owner name defined in the .env file
+RUN sed -i "1 i user ${OWNER_NAME} ${OWNER_NAME};" /etc/nginx/nginx.conf
+
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
